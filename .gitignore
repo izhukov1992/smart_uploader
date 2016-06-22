@@ -1,0 +1,11 @@
+db.sqlite3
+smart_uploader/__pycache__
+smart_uploader/__pycache__/*
+account/__pycache__
+account/__pycache__/*
+account/migrations
+account/migrations/*
+uploader/__pycache__
+uploader/__pycache__/*
+uploader/migrations
+uploader/migrations/*
