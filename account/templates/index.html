@@ -5,10 +5,17 @@
     <title>User dashboard</title>
   </head>
   <body>
-    <form action="{% url 'uploader:upload' %}" method="post">
-      {% csrf_token %}
+    <form action="{% url 'account:index' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
       {{form}}
       <input type="submit" value="upload" />
     </form>
+    {% if file_duplicate %}
+    <p>File duplicates:</p>
+    <p>{{ file_duplicate.file }}</p>
+    {% endif %}
+    {% if file_new %}
+    <p>File is uploaded:</p>
+    <p>{{ file_new.file }}</p>
+    {% endif %}
   </body>
 </html>
