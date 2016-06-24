@@ -1,3 +1,11 @@
 from django.contrib import admin
+from .models import StorageFile
 
-# Register your models here.
+
+class StorageFileAdmin(admin.ModelAdmin):
+    """uploader.StorageFileAdmin"""
+
+    pass
+
+
+admin.site.register(StorageFile, StorageFileAdmin)
