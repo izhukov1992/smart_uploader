@@ -1,4 +1,3 @@
 from django.shortcuts import render
 
-def upload():
-    pass
+# Create your views here.
