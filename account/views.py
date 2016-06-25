@@ -40,6 +40,10 @@ class UploadView(BaseView):
     template_name = 'upload.html'
 
     def post(self, request):
+        if UserFile.objects.filter(user=request.user).count() > 99:
+            self.context.update({'limit': True})
+            return super(UploadView, self).get(request)
+
         form = StorageFileForm(request.POST, request.FILES)
         if not form.is_valid():
             self.context.update({'form': form})

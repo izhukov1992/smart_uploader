@@ -7,6 +7,10 @@
   <body>
     <a href="{% url 'account:index' %}">Back to Dashboard</a>
 
+    {% if limit %}
+    <p>Max number of file is reached:</p>
+    {% endif %}
+
     {% if file_duplicate %}
     <p>File duplicates:</p>
     <ul>
