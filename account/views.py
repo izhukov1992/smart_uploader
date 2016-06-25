@@ -4,6 +4,7 @@ from django.views.generic.base import TemplateView
 from uploader.models import StorageFile
 from uploader.forms import StorageFileForm
 from uploader.utils import getSHA1Digest
+from .models import UserFile
 
 
 class BaseView(TemplateView):
@@ -22,17 +23,28 @@ class IndexView(BaseView):
 
     def get(self, request):
         self.context = {}
+        
+        files = UserFile.objects.filter(user=request.user)
+        self.context.update({'files': files})
+        
         form = StorageFileForm()
         self.context.update(csrf(request))
         self.context.update({'form': form})
+        
         return super(IndexView, self).get(request)
+
+
+class UploadView(BaseView):
+    """account.UploadView"""
+    
+    template_name = 'upload.html'
 
     def post(self, request):
         form = StorageFileForm(request.POST, request.FILES)
         if not form.is_valid():
             self.context.update({'form': form})
-            return super(IndexView, self).get(request)
-            
+            return super(UploadView, self).get(request)
+
         file_uploaded = request.FILES['file']
         hash = getSHA1Digest(file_uploaded)
         try:
@@ -46,8 +58,11 @@ class IndexView(BaseView):
             file_new = StorageFile(file=file_uploaded, sha1=hash)
             file_new.save()
             self.context.update({'file_new': file_new})
-        #user area file instance creation
-        return super(IndexView, self).get(request)
+
+        file_user = UserFile(user=request.user, file=file_new, display_name=file_uploaded)
+        file_user.save()
+
+        return super(UploadView, self).get(request)
 
 
 class FilesView(BaseView):
