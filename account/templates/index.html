@@ -5,17 +5,20 @@
     <title>User dashboard</title>
   </head>
   <body>
-    <form action="{% url 'account:index' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <form action="{% url 'account:upload' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
       {{form}}
       <input type="submit" value="upload" />
     </form>
-    {% if file_duplicate %}
-    <p>File duplicates:</p>
-    <p>{{ file_duplicate.file }}</p>
-    {% endif %}
-    {% if file_new %}
-    <p>File is uploaded:</p>
-    <p>{{ file_new.file }}</p>
+
+    {% if files %}
+    <p>My files:</p>
+    <ul>
+      {% for file in files %}
+      <li><a href="{{ file.file.file }}">{{ file.display_name }}</a></li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>I have no any files</p>
     {% endif %}
   </body>
 </html>

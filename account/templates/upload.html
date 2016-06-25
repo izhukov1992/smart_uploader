@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>User dashboard | Upload</title>
+  </head>
+  <body>
+    <a href="{% url 'account:index' %}">Back to Dashboard</a>
+
+    {% if file_duplicate %}
+    <p>File duplicates:</p>
+    <ul>
+    {% for file in file_duplicate.userfile_set.all %}
+      <li>{{ file.display_name }} of user: {{ file.user }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if file_new %}
+    <p>File is uploaded:</p>
+    <p>{{ file_new.file }}</p>
+    {% endif %}
+  </body>
+</html>
