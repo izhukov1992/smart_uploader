@@ -65,10 +65,16 @@ class UploadView(BaseView):
         return super(UploadView, self).get(request)
 
 
-class FilesView(BaseView):
-    """account.FilesView"""
+class DeleteView(BaseView):
+    """account.DeleteView"""
     
-    template_name = 'files.html'
+    template_name = 'delete.html'
 
-    def get(self, request):
-        return super(FilesView, self).get(request)
+    def get(self, request, file_id):
+        file_user = UserFile.objects.get(pk=file_id)
+        file_storage = file_user.file
+        file_user.delete()
+        if file_storage.userfile_set.count() < 1:
+            file_storage.file.delete()
+            file_storage.delete()
+        return super(DeleteView, self).get(request)

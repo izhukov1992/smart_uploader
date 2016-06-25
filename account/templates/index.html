@@ -12,11 +12,15 @@
 
     {% if files %}
     <p>My files:</p>
-    <ul>
+    <table>
       {% for file in files %}
-      <li><a href="{% url 'uploader:download' file.id %}">{{ file.display_name }}</a></li>
+      <tr>
+        <td><a href="{% url 'uploader:download' file.id %}">{{ file.display_name }}</a></td>
+        <td><a href="{% url 'uploader:download' file.id %}">download</a></td>
+        <td><a href="{% url 'account:delete' file.id %}">delete</a></td>
+      </tr>
       {% endfor %}
-    </ul>
+    </table>
     {% else %}
     <p>I have no any files</p>
     {% endif %}
