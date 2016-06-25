@@ -14,7 +14,7 @@
     <p>My files:</p>
     <ul>
       {% for file in files %}
-      <li><a href="{{ file.file.file }}">{{ file.display_name }}</a></li>
+      <li><a href="{% url 'uploader:download' file.id %}">{{ file.display_name }}</a></li>
       {% endfor %}
     </ul>
     {% else %}
