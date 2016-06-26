@@ -14,68 +14,107 @@ from .models import UserFile
 
 
 class BaseView(TemplateView):
-    """account.BaseView"""
+    """
+    Base template view
+    """
 
+    # Define context dictionary
     context = {}
 
     def get(self, request):
+        """
+        Handle GET-query. Render template. Return HTML-page
+        """
+
         return render(request, self.template_name, self.context)
 
 
 class IndexView(BaseView):
-    """account.IndexView"""
+    """
+    User storage view
+    """
     
     template_name = 'index.html'
 
     def get(self, request):
+        """
+        Handle GET
+        """
+
         if request.user.is_anonymous():
             return redirect('account:login')
-        
+
+        # Find all files in user storage 
         files = UserFile.objects.filter(user=request.user)
+        # Update context
         self.context.update({'files': files})
         
+        # Create file uploading form
         form = StorageFileForm()
+        # Generate CSRF-token
         self.context.update(csrf(request))
+        # Update context
         self.context.update({'form': form})
         
+        # Call GET handler of base class
         return super(IndexView, self).get(request)
 
 
 class UploadView(BaseView):
-    """account.UploadView"""
+    """
+    File uploading view
+    """
     
     template_name = 'upload.html'
 
     def post(self, request):
+        """
+        Handle POST
+        """
+
         if request.user.is_anonymous():
+            # Redirect to login page if anonymous
             return redirect('account:login')
 
         if UserFile.objects.filter(user=request.user).count() > 99:
+            # If user has more than 99 files in storage return limitation alert
             self.context.update({'limit': True})
             return super(UploadView, self).get(request)
 
+        # Extract data from form
         form = StorageFileForm(request.POST, request.FILES)
         if not form.is_valid():
+            # If data is not valid return errors alerts
             self.context.update({'form': form})
             return super(UploadView, self).get(request)
 
+        # Clean context
         self.context = {}
 
+        # Get uploaded file
         file_uploaded = request.FILES['file']
+        # Generate SHA-1 hash
         hash = getSHA1Digest(file_uploaded)
         try:
+            # Try to find duplicates of uploaded file by hash
             file_duplicate = StorageFile.objects.get(sha1=hash)
+            # Remember duplicate if exists
             file_new = file_duplicate
         except:
+            # File is unique
             file_duplicate = None
+            # Create new physical file entry
             file_new = StorageFile(file=file_uploaded, sha1=hash)
             file_new.save()
 
+        # Create mirror of file in user storage
         file_user = UserFile(user=request.user, file=file_new, display_name=file_uploaded)
         file_user.save()
         self.context.update({'file_new': file_user})
 
         if file_duplicate:
+            # Find all mirrors of physical file in users storages if file in not unique.
+            # Exclude new mirror from list
             file_duplicates = UserFile.objects.filter(file=file_duplicate).exclude(pk=file_user.pk)
             self.context.update({'file_duplicates': file_duplicates})
 
@@ -83,76 +122,138 @@ class UploadView(BaseView):
 
 
 class DeleteView(BaseView):
-    """account.DeleteView"""
+    """
+    File deleting view
+    """
     
     template_name = 'delete.html'
 
     def get(self, request, file_id):
+        """
+        Handle GET
+        """
+
         if request.user.is_anonymous():
+            # Redirect to login page if anonymous
             return redirect('account:login')
 
+        # Find mirror of file in users storages by ID
         file_user = UserFile.objects.get(pk=file_id)
+        # Get physical file by foreign key
         file_storage = file_user.file
+        # Delete mirror
         file_user.delete()
         if file_storage.userfile_set.count() < 1:
+            # If there is no other mirrors, delete physical file
             file_storage.file.delete()
+            # Delete file from disk
             file_storage.delete()
+
         return super(DeleteView, self).get(request)
 
 
 class JoinView(BaseView):
-    """account.JoinView"""
+    """
+    User registration view
+    """
     
     template_name = 'join.html'
 
     def get(self, request):
+        """
+        Handle GET
+        """
+
         if request.user.is_authenticated():
+            # Redirect to dashboard page if authenticated
             return redirect('account:index')
 
+        # Create user registration form
         form = UserCreationForm()
         self.context.update(csrf(request))
         self.context.update({'form': form})
+
         return super(JoinView, self).get(request)
 
     def post(self, request):
+        """
+        Handle POST
+        """
+
         if request.user.is_authenticated():
+            # Redirect to dashboard page if authenticated
             return redirect('account:index')
 
+        # Extract user registration form
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
+            # If data is valid create user
             user = form.save()
+            # ... then login
             user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password1'))
             login(request, user)
+            # ... then redirect to dashboard
             return redirect('account:index')
+
+        # If data is not valid return error alerts
         self.context.update({'form': form})
+
         return super(JoinView, self).get(request)
 
 
 class LoginView(BaseView):
-    """account.LoginView"""
+    """
+    User login view
+    """
     
     template_name = 'login.html'
 
     def get(self, request):
+        """
+        Handle GET
+        """
+
         if request.user.is_authenticated():
+            # Redirect to dashboard page if authenticated
             return redirect('account:index')
 
+        # Create user login form
         form = AuthenticationForm()
         self.context.update(csrf(request))
         self.context.update({'form': form})
+
         return super(LoginView, self).get(request)
 
     def post(self, request):
+        """
+        Handle POST
+        """
+
         if request.user.is_authenticated():
+            # Redirect to dashboard page if authenticated
             return redirect('account:index')
 
+        # Extract user login form
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
+            # If data is valid login
             login(request, form.get_user())
+            # ... then redirect to dashboard
             return redirect('account:index')
+
+        # If data is not valid return error alerts
         self.context.update({'form': form})
+
         return super(LoginView, self).get(request)
 
+
 def logout(request):
+    """
+    User logout view
+    """
+
+    # Logout user
     auth.logout(request)
+    
+    # Redirect to login page
     return redirect('account:login')

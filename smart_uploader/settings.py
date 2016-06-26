@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'account',
-    'uploader',
+    'account',  # Account application
+    'uploader', # Uploader application
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -83,6 +83,8 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# Find PostgreSQL configurations
 DATABASES['default'] =  dj_database_url.config()
 
 
@@ -124,4 +126,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Root directory of media content
 MEDIA_ROOT = 'uploads'
