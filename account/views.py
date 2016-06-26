@@ -2,18 +2,13 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.core.context_processors import csrf
 from django.views.generic.base import TemplateView
+from django.contrib import auth
+from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
 from uploader.models import StorageFile
 from uploader.forms import StorageFileForm
 from uploader.utils import getSHA1Digest
 from .models import UserFile
-
-from .forms import LoginForm
-
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import auth
-from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate
 
 
 class BaseView(TemplateView):
@@ -120,3 +115,7 @@ class LoginView(BaseView):
             login(request, form.get_user())
             return redirect('account:index')
         return super(LoginView, self).get(request)
+
+def logout(request):
+    auth.logout(request)
+    return redirect('account:login')
