@@ -4,6 +4,8 @@ from django.core.context_processors import csrf
 from django.views.generic.base import TemplateView
 from django.contrib import auth
 from django.contrib.auth import login
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from uploader.models import StorageFile
 from uploader.forms import StorageFileForm
@@ -95,6 +97,34 @@ class DeleteView(BaseView):
         return super(DeleteView, self).get(request)
 
 
+class JoinView(BaseView):
+    """account.JoinView"""
+    
+    template_name = 'join.html'
+
+    def get(self, request):
+        if request.user.is_authenticated():
+            return redirect('account:index')
+
+        form = UserCreationForm()
+        self.context.update(csrf(request))
+        self.context.update({'form': form})
+        return super(JoinView, self).get(request)
+
+    def post(self, request):
+        if request.user.is_authenticated():
+            return redirect('account:index')
+
+        form = UserCreationForm(data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password1'))
+            login(request, user)
+            return redirect('account:index')
+        self.context.update({'form': form})
+        return super(JoinView, self).get(request)
+
+
 class LoginView(BaseView):
     """account.LoginView"""
     
@@ -110,10 +140,14 @@ class LoginView(BaseView):
         return super(LoginView, self).get(request)
 
     def post(self, request):
+        if request.user.is_authenticated():
+            return redirect('account:index')
+
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
             return redirect('account:index')
+        self.context.update({'form': form})
         return super(LoginView, self).get(request)
 
 def logout(request):
