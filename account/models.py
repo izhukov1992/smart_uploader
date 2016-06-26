@@ -9,3 +9,6 @@ class UserFile(models.Model):
     user = models.ForeignKey(User)
     file = models.ForeignKey(StorageFile)
     display_name = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return "%s | %s" % (self.user.username, self.display_name)
