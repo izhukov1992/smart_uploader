@@ -1,10 +1,20 @@
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.core.context_processors import csrf
 from django.views.generic.base import TemplateView
 from uploader.models import StorageFile
 from uploader.forms import StorageFileForm
 from uploader.utils import getSHA1Digest
 from .models import UserFile
+
+from .forms import LoginForm
+
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib import auth
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate
+
 
 class BaseView(TemplateView):
     """account.BaseView"""
@@ -21,7 +31,8 @@ class IndexView(BaseView):
     template_name = 'index.html'
 
     def get(self, request):
-        self.context = {}
+        if request.user.is_anonymous():
+            return redirect('account:login')
         
         files = UserFile.objects.filter(user=request.user)
         self.context.update({'files': files})
@@ -39,6 +50,9 @@ class UploadView(BaseView):
     template_name = 'upload.html'
 
     def post(self, request):
+        if request.user.is_anonymous():
+            return redirect('account:login')
+
         if UserFile.objects.filter(user=request.user).count() > 99:
             self.context.update({'limit': True})
             return super(UploadView, self).get(request)
@@ -74,6 +88,9 @@ class DeleteView(BaseView):
     template_name = 'delete.html'
 
     def get(self, request, file_id):
+        if request.user.is_anonymous():
+            return redirect('account:login')
+
         file_user = UserFile.objects.get(pk=file_id)
         file_storage = file_user.file
         file_user.delete()
@@ -81,3 +98,25 @@ class DeleteView(BaseView):
             file_storage.file.delete()
             file_storage.delete()
         return super(DeleteView, self).get(request)
+
+
+class LoginView(BaseView):
+    """account.LoginView"""
+    
+    template_name = 'login.html'
+
+    def get(self, request):
+        if request.user.is_authenticated():
+            return redirect('account:index')
+
+        form = AuthenticationForm()
+        self.context.update(csrf(request))
+        self.context.update({'form': form})
+        return super(LoginView, self).get(request)
+
+    def post(self, request):
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect('account:index')
+        return super(LoginView, self).get(request)
