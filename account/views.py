@@ -6,7 +6,6 @@ from uploader.forms import StorageFileForm
 from uploader.utils import getSHA1Digest
 from .models import UserFile
 
-
 class BaseView(TemplateView):
     """account.BaseView"""
 
@@ -61,10 +60,10 @@ class UploadView(BaseView):
         else:
             file_new = StorageFile(file=file_uploaded, sha1=hash)
             file_new.save()
-            self.context.update({'file_new': file_new})
 
         file_user = UserFile(user=request.user, file=file_new, display_name=file_uploaded)
         file_user.save()
+        self.context.update({'file_new': file_user})
 
         return super(UploadView, self).get(request)
 
