@@ -59,22 +59,25 @@ class UploadView(BaseView):
             self.context.update({'form': form})
             return super(UploadView, self).get(request)
 
+        self.context = {}
+
         file_uploaded = request.FILES['file']
         hash = getSHA1Digest(file_uploaded)
         try:
             file_duplicate = StorageFile.objects.get(sha1=hash)
+            file_new = file_duplicate
         except:
             file_duplicate = None
-        if file_duplicate:
-            self.context.update({'file_duplicate': file_duplicate})
-            file_new = file_duplicate
-        else:
             file_new = StorageFile(file=file_uploaded, sha1=hash)
             file_new.save()
 
         file_user = UserFile(user=request.user, file=file_new, display_name=file_uploaded)
         file_user.save()
         self.context.update({'file_new': file_user})
+
+        if file_duplicate:
+            file_duplicates = UserFile.objects.filter(file=file_duplicate).exclude(pk=file_user.pk)
+            self.context.update({'file_duplicates': file_duplicates})
 
         return super(UploadView, self).get(request)
 

@@ -17,10 +17,10 @@
     <p>Permalink: <input type="text" value="{{ request.scheme }}://{{ request.get_host }}{% url 'uploader:download' file_new.id %}" readonly/></p>
     {% endif %}
 
-    {% if file_duplicate %}
+    {% if file_duplicates %}
     <p>File duplicates:</p>
     <ul>
-    {% for file in file_duplicate.userfile_set.all %}
+    {% for file in file_duplicates %}
       <li>{{ file.display_name }} of user: {{ file.user }}</li>
     {% endfor %}
     </ul>
