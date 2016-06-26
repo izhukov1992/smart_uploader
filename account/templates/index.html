@@ -5,6 +5,10 @@
     <title>User dashboard</title>
   </head>
   <body>
+    {% if request.user.is_staff %}
+    <a href="{% url 'admin:index' %}">Admin</a><br/>
+    {% endif %}
+
     <a href="{% url 'account:logout' %}">Logout</a>
 
     <form action="{% url 'account:upload' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
