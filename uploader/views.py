@@ -16,10 +16,8 @@ def getFile(request, file_id):
     response['Content-Disposition'] = 'attachment; filename="%s"' % iri_to_uri(file_user.display_name)
     
     # Get physical file by foreign key and open
-    file_user.file.file.open()
-    # Write byte stream to response object
-    response.write(file_user.file.file.read())
-    # Close physical file
-    file_user.file.file.close()
+    with file_user.file.file as file:
+        # Write byte stream to response object
+        response.write(file.read())
 
     return response
