@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils.encoding import iri_to_uri
 from account.models import UserFile

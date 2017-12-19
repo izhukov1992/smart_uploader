@@ -6,6 +6,7 @@ from .views import JoinView
 from .views import LoginView
 from .views import logout
 
+app_name = 'account'
 urlpatterns = [
     url(r'^$', IndexView.as_view(), name='index'),                              # Dashboard url (../)
     url(r'^upload/$', UploadView.as_view(), name='upload'),                     # Upload url (../upload/)

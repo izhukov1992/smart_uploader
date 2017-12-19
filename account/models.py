@@ -8,9 +8,9 @@ class UserFile(models.Model):
     Model of files in user storage
     """
 
-    user = models.ForeignKey(User)                  # Owner
-    file = models.ForeignKey(StorageFile)           # Physical file
-    display_name = models.CharField(max_length=255) # User version of file name
+    user = models.ForeignKey(User, on_delete=models.CASCADE)            # Owner
+    file = models.ForeignKey(StorageFile, on_delete=models.CASCADE)     # Physical file
+    display_name = models.CharField(max_length=255)                     # User version of file name
     
     def __str__(self):
         """

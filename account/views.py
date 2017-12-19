@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
-from django.core.context_processors import csrf
 from django.views.generic.base import TemplateView
 from django.contrib import auth
 from django.contrib.auth import login
@@ -41,7 +40,7 @@ class IndexView(BaseView):
         Handle GET
         """
 
-        if request.user.is_anonymous():
+        if request.user.is_anonymous:
             return redirect('account:login')
 
         # Find all files in user storage 
@@ -51,8 +50,6 @@ class IndexView(BaseView):
         
         # Create file uploading form
         form = StorageFileForm()
-        # Generate CSRF-token
-        self.context.update(csrf(request))
         # Update context
         self.context.update({'form': form})
         
@@ -72,7 +69,7 @@ class UploadView(BaseView):
         Handle POST
         """
 
-        if request.user.is_anonymous():
+        if request.user.is_anonymous:
             # Redirect to login page if anonymous
             return redirect('account:login')
 
@@ -133,7 +130,7 @@ class DeleteView(BaseView):
         Handle GET
         """
 
-        if request.user.is_anonymous():
+        if request.user.is_anonymous:
             # Redirect to login page if anonymous
             return redirect('account:login')
 

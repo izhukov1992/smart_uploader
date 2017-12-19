@@ -1,9 +1,4 @@
 db.sqlite3
 uploads
-uploads/*
-smart_uploader/__pycache__
-smart_uploader/__pycache__/*
-account/__pycache__
-account/__pycache__/*
-uploader/__pycache__
-uploader/__pycache__/*
+.idea
+*.pyc
