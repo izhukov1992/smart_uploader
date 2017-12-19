@@ -13,31 +13,27 @@ from .models import UserFile
 
 
 class BaseView(TemplateView):
-    """
-    Base template view
+    """Base template view
     """
 
     # Define context dictionary
     context = {}
 
     def get(self, request):
-        """
-        Handle GET-query. Render template. Return HTML-page
+        """Handle GET-query. Render template. Return HTML-page
         """
 
         return render(request, self.template_name, self.context)
 
 
 class IndexView(BaseView):
-    """
-    User storage view
+    """User storage view
     """
     
     template_name = 'index.html'
 
     def get(self, request):
-        """
-        Handle GET
+        """Handle GET
         """
 
         if request.user.is_anonymous:
@@ -58,15 +54,13 @@ class IndexView(BaseView):
 
 
 class UploadView(BaseView):
-    """
-    File uploading view
+    """File uploading view
     """
     
     template_name = 'upload.html'
 
     def post(self, request):
-        """
-        Handle POST
+        """Handle POST
         """
 
         if request.user.is_anonymous:
@@ -119,15 +113,13 @@ class UploadView(BaseView):
 
 
 class DeleteView(BaseView):
-    """
-    File deleting view
+    """File deleting view
     """
     
     template_name = 'delete.html'
 
     def get(self, request, file_id):
-        """
-        Handle GET
+        """Handle GET
         """
 
         if request.user.is_anonymous:
@@ -150,15 +142,13 @@ class DeleteView(BaseView):
 
 
 class JoinView(BaseView):
-    """
-    User registration view
+    """User registration view
     """
     
     template_name = 'join.html'
 
     def get(self, request):
-        """
-        Handle GET
+        """Handle GET
         """
 
         if request.user.is_authenticated:
@@ -172,8 +162,7 @@ class JoinView(BaseView):
         return super(JoinView, self).get(request)
 
     def post(self, request):
-        """
-        Handle POST
+        """Handle POST
         """
 
         if request.user.is_authenticated:
@@ -198,15 +187,13 @@ class JoinView(BaseView):
 
 
 class LoginView(BaseView):
-    """
-    User login view
+    """User login view
     """
     
     template_name = 'login.html'
 
     def get(self, request):
-        """
-        Handle GET
+        """Handle GET
         """
 
         if request.user.is_authenticated:
@@ -220,8 +207,7 @@ class LoginView(BaseView):
         return super(LoginView, self).get(request)
 
     def post(self, request):
-        """
-        Handle POST
+        """Handle POST
         """
 
         if request.user.is_authenticated:
@@ -243,8 +229,7 @@ class LoginView(BaseView):
 
 
 def logout(request):
-    """
-    User logout view
+    """User logout view
     """
 
     # Logout user

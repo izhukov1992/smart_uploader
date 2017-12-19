@@ -3,8 +3,7 @@ from django.utils.encoding import iri_to_uri
 from account.models import UserFile
 
 def getFile(request, file_id):
-    """
-    Download view
+    """Download view
     """
 
     # Find user storage file by ID

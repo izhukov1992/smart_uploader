@@ -1,8 +1,7 @@
 import hashlib
 
 def getSHA1Digest(file):
-    """
-    Generate and return SHA-1 hash
+    """Generate and return SHA-1 hash
     """
     
     sha1 = hashlib.sha1()

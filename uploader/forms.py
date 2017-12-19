@@ -2,8 +2,7 @@ from django import forms
 
 
 class StorageFileForm(forms.Form):
-    """
-    File uploading form
+    """File uploading form
     """
 
     file = forms.FileField()    # File from computer
