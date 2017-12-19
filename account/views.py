@@ -161,13 +161,12 @@ class JoinView(BaseView):
         Handle GET
         """
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             # Redirect to dashboard page if authenticated
             return redirect('account:index')
 
         # Create user registration form
         form = UserCreationForm()
-        self.context.update(csrf(request))
         self.context.update({'form': form})
 
         return super(JoinView, self).get(request)
@@ -177,7 +176,7 @@ class JoinView(BaseView):
         Handle POST
         """
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             # Redirect to dashboard page if authenticated
             return redirect('account:index')
 
@@ -210,13 +209,12 @@ class LoginView(BaseView):
         Handle GET
         """
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             # Redirect to dashboard page if authenticated
             return redirect('account:index')
 
         # Create user login form
         form = AuthenticationForm()
-        self.context.update(csrf(request))
         self.context.update({'form': form})
 
         return super(LoginView, self).get(request)
@@ -226,7 +224,7 @@ class LoginView(BaseView):
         Handle POST
         """
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             # Redirect to dashboard page if authenticated
             return redirect('account:index')
 
