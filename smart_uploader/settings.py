@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'tornado_websockets',
     'account',  # Account application
     'uploader', # Uploader application
 ]
@@ -123,3 +124,13 @@ STATIC_URL = '/static/'
 
 # Root directory of media content
 MEDIA_ROOT = 'uploads'
+
+import tornado_websockets
+TORNADO = {
+    'port': 1337,    # 8000 by default
+    'settings': {},  # {} by default
+    'handlers': [
+        # ...
+        tornado_websockets.django_app(),  # django_app is using a "wildcard" route, so it should be the last element
+    ],
+}
