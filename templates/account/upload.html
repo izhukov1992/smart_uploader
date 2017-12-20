@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>User dashboard | Upload</title>
+  </head>
+  <body>
+    <a href="{% url 'account:index' %}">Back to Dashboard</a>
+
+    {% if limit %}
+    <p>Max number of file is reached:</p>
+    {% endif %}
+
+    {% if file_new %}
+    <p>File is uploaded:</p>
+    <p><a href="{% url 'uploader:download' file_new.id %}">{{ file_new.display_name }}</a></p>
+    <p>Permalink: <input type="text" value="{{ request.scheme }}://{{ request.get_host }}{% url 'uploader:download' file_new.id %}" readonly/></p>
+    {% endif %}
+
+    {% if file_duplicates %}
+    <p>File duplicates:</p>
+    <ul>
+    {% for file in file_duplicates %}
+      <li>{{ file.display_name }} of user: {{ file.user }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+  </body>
+</html>

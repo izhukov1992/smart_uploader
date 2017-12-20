@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Join</title>
+  </head>
+  <body>
+    <a href="{% url 'account:login' %}">Back to login</a>
+    
+    <form action="{% url 'account:join' %}" method="post">{% csrf_token %}
+      {{form}}
+      <input type="submit" value="join" />
+    </form>
+  </body>
+</html>

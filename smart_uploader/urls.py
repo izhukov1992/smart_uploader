@@ -18,7 +18,8 @@ from django.conf.urls import include
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),                                   # Admin app urls
-    url(r'^', include('account.urls', namespace='account')),            # Account app urls
-    url(r'^uploader/', include('uploader.urls', namespace='uploader')), # Uploader app urls
+    url(r'^admin/', admin.site.urls),                                   			# Admin app urls
+    url(r'^', include('account.urls', namespace='account')),            			# Account app urls
+    url(r'^ws/', include('account_tornado.urls', namespace='account_tornado')),		# Account app urls
+    url(r'^uploader/', include('uploader.urls', namespace='uploader')), 			# Uploader app urls
 ]

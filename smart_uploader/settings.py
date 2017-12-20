@@ -57,11 +57,14 @@ ROOT_URLCONF = 'smart_uploader.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
+                'django.template.context_processors.static',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -121,16 +124,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'staticfiles')
+]
 
 # Root directory of media content
 MEDIA_ROOT = 'uploads'
 
 import tornado_websockets
+import tornado.web
 TORNADO = {
     'port': 1337,    # 8000 by default
     'settings': {},  # {} by default
     'handlers': [
         # ...
         tornado_websockets.django_app(),  # django_app is using a "wildcard" route, so it should be the last element
+        #(r'%s(.*)' % STATIC_URL, tornado.web.StaticFileHandler, {'path': STATIC_ROOT}),
     ],
 }
