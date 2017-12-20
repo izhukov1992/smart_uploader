@@ -30,7 +30,7 @@ class IndexView(BaseView):
     """User storage view
     """
     
-    template_name = 'index.html'
+    template_name = 'account/index.html'
 
     def get(self, request):
         """Handle GET
@@ -57,7 +57,7 @@ class UploadView(BaseView):
     """File uploading view
     """
     
-    template_name = 'upload.html'
+    template_name = 'account/upload.html'
 
     def post(self, request):
         """Handle POST
@@ -116,7 +116,7 @@ class DeleteView(BaseView):
     """File deleting view
     """
     
-    template_name = 'delete.html'
+    template_name = 'account/delete.html'
 
     def get(self, request, file_id):
         """Handle GET
@@ -143,7 +143,7 @@ class JoinView(BaseView):
     """User registration view
     """
     
-    template_name = 'join.html'
+    template_name = 'account/join.html'
 
     def get(self, request):
         """Handle GET
@@ -188,7 +188,7 @@ class LoginView(BaseView):
     """User login view
     """
     
-    template_name = 'login.html'
+    template_name = 'account/login.html'
 
     def get(self, request):
         """Handle GET
