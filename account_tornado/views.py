@@ -6,32 +6,13 @@ from django.views.generic.base import TemplateView
 #from django.contrib.auth import authenticate
 #from django.contrib.auth.forms import UserCreationForm
 #from django.contrib.auth.forms import AuthenticationForm
-#from uploader.models import StorageFile
-from uploader.forms import StorageFileForm
-#from uploader.utils import getSHA1Digest
-from account.models import UserFile
 from tornado_websockets.websocket import WebSocket
 
-# Make a new instance of WebSocket and automatically add handler '/ws/my_ws' to Tornado handlers
-ws_echo = WebSocket('/echo')
+#from uploader.models import StorageFile
+#from uploader.forms import StorageFileForm
+#from uploader.utils import getSHA1Digest
+from account.models import UserFile
 
-@ws_echo.on
-def open(socket):
-    # Notify all clients about a new connection
-    ws_echo.emit('new_connection')
-
-@ws_echo.on
-def message(socket, data):
-    # Reply to the client
-    socket.emit('message', data)
-
-    # Wow we got a spammer, let's inform the first client :^)
-    if 'spam' in data.message:
-        # wow
-        ws_echo[0].emit('got_spam', {
-            'message': data.get('message'),
-            'socket': socket
-        })
 
 class BaseView(TemplateView):
     """Base template view
@@ -59,16 +40,30 @@ class IndexView(BaseView):
 
         if request.user.is_anonymous:
             return redirect('account:login')
-
-        # Find all files in user storage 
-        files = UserFile.objects.filter(user=request.user)
-        # Update context
-        self.context.update({'files': files})
-        
-        # Create file uploading form
-        form = StorageFileForm()
-        # Update context
-        self.context.update({'form': form})
         
         # Call GET handler of base class
         return super(IndexView, self).get(request)
+
+
+# Make a new instance of WebSocket and automatically add handler '/ws/files' to Tornado handlers
+ws_files = WebSocket('/files')
+
+@ws_files.on
+def open(socket):
+    # Notify all clients about a new connection
+    data = [{'username': file.user.username, 'id': file.pk, 'display_name': file.display_name} for file in UserFile.objects.all()]
+    ws_files.emit('new_connection', data={'files': data})
+
+
+@ws_files.on
+def message(socket, data):
+    # Reply to the client
+    socket.emit('message', data)
+
+    # Wow we got a spammer, let's inform the first client :^)
+    if 'spam' in data.message:
+        # wow
+        ws_files[0].emit('got_spam', {
+            'message': data.get('message'),
+            'socket': socket
+        })

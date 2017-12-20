@@ -17,21 +17,7 @@
       <input type="submit" value="upload" />
     </form>
 
-    {% if files %}
-    <p>My files:</p>
-    <table>
-      {% for file in files %}
-      <tr>
-        <td><a href="{% url 'uploader:download' file.id %}">{{ file.display_name }}</a></td>
-        <td>permalink: <input type="text" value="{{ request.scheme }}://{{ request.get_host }}{% url 'uploader:download' file.id %}" readonly/></td>
-        <td><a href="{% url 'uploader:download' file.id %}">download</a></td>
-        <td><a href="{% url 'account:delete' file.id %}">delete</a></td>
-      </tr>
-      {% endfor %}
-    </table>
-    {% else %}
-    <p>I have no any files</p>
-    {% endif %}
+    <div id="content"></div>
 	<script src="{% static 'js/client.js' %}"></script>
   </body>
 </html>

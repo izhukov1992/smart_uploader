@@ -138,8 +138,7 @@ TORNADO = {
     'port': 1337,    # 8000 by default
     'settings': {},  # {} by default
     'handlers': [
-        # ...
+        (r'%s(.*)' % STATIC_URL, tornado.web.StaticFileHandler, {'path': os.path.join(BASE_DIR, 'staticfiles')}),
         tornado_websockets.django_app(),  # django_app is using a "wildcard" route, so it should be the last element
-        #(r'%s(.*)' % STATIC_URL, tornado.web.StaticFileHandler, {'path': STATIC_ROOT}),
     ],
 }
