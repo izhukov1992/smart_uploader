@@ -85,17 +85,17 @@ class UploadView(BaseView):
         # Get uploaded file
         file_uploaded = request.FILES['file']
         # Generate SHA-1 hash
-        hash = getSHA1Digest(file_uploaded)
+        digest = getSHA1Digest(file_uploaded)
         try:
             # Try to find duplicates of uploaded file by hash
-            file_duplicate = StorageFile.objects.get(sha1=hash)
+            file_duplicate = StorageFile.objects.get(sha1=digest)
             # Remember duplicate if exists
             file_new = file_duplicate
-        except:
+        except Exception:
             # File is unique
             file_duplicate = None
             # Create new physical file entry
-            file_new = StorageFile(file=file_uploaded, sha1=hash)
+            file_new = StorageFile(file=file_uploaded, sha1=digest)
             file_new.save()
 
         # Create mirror of file in user storage
@@ -126,17 +126,15 @@ class DeleteView(BaseView):
             # Redirect to login page if anonymous
             return redirect('account:login')
 
-        # Find mirror of file in users storages by ID
+        # Find link of file in users storages by ID
         file_user = UserFile.objects.get(pk=file_id)
-        # Get physical file by foreign key
-        file_storage = file_user.file
-        # Delete mirror
+        if file_user.file.userfile_set.count() < 2:
+            # If there is only one link, delete physical file
+            file_user.file.file.delete()
+            # Delete entry from databse
+            file_user.file.delete()
+        # Delete link
         file_user.delete()
-        if file_storage.userfile_set.count() < 1:
-            # If there is no other mirrors, delete physical file
-            file_storage.file.delete()
-            # Delete file from disk
-            file_storage.delete()
 
         return super(DeleteView, self).get(request)
 
@@ -173,7 +171,7 @@ class JoinView(BaseView):
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
             # If data is valid create user
-            user = form.save()
+            form.save()
             # ... then login
             user = authenticate(username=form.cleaned_data.get('username'), password=form.cleaned_data.get('password1'))
             login(request, user)

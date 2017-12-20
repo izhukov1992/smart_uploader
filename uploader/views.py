@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.utils.encoding import iri_to_uri
 from account.models import UserFile
 
+
 def getFile(request, file_id):
     """Download view
     """
