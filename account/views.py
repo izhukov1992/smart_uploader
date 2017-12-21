@@ -41,14 +41,12 @@ class IndexView(BaseView):
 
         # Find all files in user storage 
         files = UserFile.objects.filter(user=request.user)
-        # Update context
-        self.context.update({'files': files})
-        
         # Create file uploading form
         form = StorageFileForm()
+
         # Update context
-        self.context.update({'form': form})
-        
+        self.context.update({'files': files, 'form': form})
+
         # Call GET handler of base class
         return super(IndexView, self).get(request)
 
